@@ -1,10 +1,10 @@
 # EXP-04-Interfacing a 16X2 type LCD display to LPC2148 ARM 7Microcontroller
 
-Name :
+Name : M.RAJESHKANNAN
 
-Roll no :
+Roll no : 212221230081
 
-Date of experiment :
+Date of experiment : 14/10/2022
 
  
 
@@ -121,20 +121,97 @@ Figure -12 Hex file for simulation
 Step 9: Select the hex file from the Kiel program folder and import the program in to the microcontroller as shown in figure 11 ,  debug and if no errors in connections are found, run the VSM simulation to view the output.
 
 
-## Kiel - Program  
+## Kiel - Program   
+
+```
+#include<lpc214x.h>
+#include<stdint.h>
+#include<stdlib.h>
+#include<stdio.h>
+
+void delay_ms(uint16_t j)
+{
+	uint16_t x,i;
+	for(i=0;i<j;i++)
+	{
+		for(x=0;x<6000;x++);
+	}
+}
+
+void LCD_CMD(char command)
+{
+	IO0PIN = ((IO0PIN & 0xFFFF00FF)|(command<<8));
+	IO0SET = 0x00000040;
+	IO0CLR = 0x00000030;
+	delay_ms(2);
+	IO0CLR = 0x00000040;
+	delay_ms(5);
+}
+
+void LCD_INIT(void)
+{
+	IO0DIR = 0x0000FFF0;
+	delay_ms(20);
+	LCD_CMD(0x38);
+	LCD_CMD(0x0C);
+	LCD_CMD(0x06);
+	LCD_CMD(0x01);
+	LCD_CMD(0x80);
+}
+void LCD_STRING(char*msg)
+{
+	uint8_t i=0;
+	while(msg[i]!=0)
+	{
+		IO0PIN = ((IO0PIN & 0xFFFF00FF)|(msg[i]<<8));
+		IO0SET = 0x00000050;
+		IO0CLR = 0x00000020;
+		delay_ms(2);
+		IO0CLR = 0x00000040;
+		delay_ms(5);
+		i++;
+	}
+}
+
+void LCD_CHAR(char msg)
+{
+	IO0PIN = ((IO0PIN & 0xFFFF00FF)|(msg<<8));
+	IO0SET = 0x00000050;
+	IO0CLR = 0x00000020;
+	delay_ms(2);
+	IO0CLR = 0x00000040;
+	delay_ms(5);
+}
+int main(void)
+{
+	LCD_INIT();
+	LCD_STRING("Welcome to AI&DS");
+	LCD_CMD(0xC0);
+	LCD_STRING("212221230081");
+
+	return 0;
+}
 
 
 
 
+```
 
 ## Proteus simulation 
 
+### Before simulation
 
+
+![LCD OFF](https://user-images.githubusercontent.com/93901857/195828529-cd9c72ea-1756-4d2d-b918-95c366f04b49.jpg)
+
+### After simulation
+
+![LCD ON](https://user-images.githubusercontent.com/93901857/195828540-0a6ab481-4a71-4729-a12f-32c69d2e0a3b.jpg)
 
 
 ##  layout Diagram 
 
-
+![PDF IMG](https://user-images.githubusercontent.com/93901857/195828548-1abc5cd8-3b38-491e-b5ae-0a408d73025a.jpg)
 
 ## Result :
 
